@@ -6,17 +6,23 @@ function Learner:new(o)
 	o = o or {}; -- create a new object if it is not provided
 	setmetatable(o, self); -- set the prototype
 	self.__index = self;
+	o:init();
+	
 	return o;
 end
 
 function Learner:init()
-	print("init "..self.id);
+
 end
 
 function Learner:getAction(iteration) -- the learner knows which iteration they are playing
 	return 1;
 end
 
+
+local function feval(params)
+	
+end
 
 function Learner:learning()
 	print("start learning");
