@@ -20,10 +20,6 @@ function Learner:getAction(iteration) -- the learner knows which iteration they 
 end
 
 
-local function feval(params)
-	
-end
-
 function Learner:learning()
 	print("start learning");
 end
