@@ -22,6 +22,7 @@ function LSTM.create(size)     -- if size == 1, there is 8 weights in this layer
 		local i2h = nn.Linear(size, size)(x)      -- input to hidden
 		-- transforms previous timestep's output
 		local h2h = nn.Linear(size, size)(prevH)  -- hidden to hidden
+		local c2h = nn.Linear(size, size)(prevC);
 		local sum = nn.CAddTable()({i2h, h2h});
 		return sum;
 	end
@@ -40,4 +41,4 @@ function LSTM.create(size)     -- if size == 1, there is 8 weights in this layer
 	return nn.gModule({x, prevC, prevH}, {nextC, nextH});
 end
 
-return LSTM
+return LSTM;
