@@ -4,7 +4,7 @@ local Learner = torch.class('rl.Learner');
 
 function Learner:__init(model)
 	self.model = model;
-	self.alpha = 0;
+	self.alpha = 0.001;
 end
 
 function Learner:setLearningRate(alpha)

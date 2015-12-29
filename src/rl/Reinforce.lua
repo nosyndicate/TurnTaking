@@ -3,8 +3,8 @@ require 'torch'
 local Reinforce, parent = torch.class('rl.Reinforce','rl.PolicySearch');
 
 
-function Reinforce:__init(model, actor)
-	parent.__init(self, model, actor);
+function Reinforce:__init(model, actor, optimizer)
+	parent.__init(self, model, actor, optimizer);
 	self.reward = {};
 	self.gradient = {};
 	self.rewardCurrentTrial = nil;
@@ -16,16 +16,16 @@ function Reinforce:step(s, r)
 	-- TODO: this means we are not discount the reward, may consider as future work
 	self.rewardCurrentTrial = self.rewardCurrentTrial + r;
 	
-	-- then compute the gradient of current step
-	
-	
+	-- then compute the gradient of current step and add to gradient of current trial
+	local dLogPolicyDOutput = self.actor:backward();
+	self.model:backward(s, dLogPolicyDOutput);
+	self.gradientCurrentTrial:add(self.optimizer.grads);
 end
 
 function Reinforce:startTrial()
 	-- initialize the reward and gradient
 	self.rewardCurrentTrial = 0;
-	local _, g = model:getParameters();
-	self.gradientCurrentTrial = torch.Tensor(g:size()):zeros();
+	self.gradientCurrentTrial = self.optimizer.grads:clone():zero();
 end
 
 function Reinforce:endTrial()
@@ -40,16 +40,15 @@ function Reinforce:calculateGradient()
 	-- first get the number of trials
 	local l = #self.reward;
 	-- create the gradient estimator
-	local gradientEstimator = torch.Tensor(self.gradient[1]:size()):zeros();
+	local gradientEstimator = self.gradient[1]:clone():zero();
 	for i = 1,l do
 		-- multiple the accumulated gradient for each trial with the reward
 		local tempGradient = torch.mul(self.gradient[i], reward[i]);
 		-- sum up the trials
-		gradientEstimator = torch.add(tempGradient, gradientEstimator);
+		gradientEstimator:add(tempGradient);
 	end
 	
 	-- TODO: may need to consider to add optimal baseline here
-	
 	
 	-- return the average of the gradient estimator
 	return torch.div(gradientEstimator, l); 

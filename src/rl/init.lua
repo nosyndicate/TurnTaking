@@ -6,7 +6,10 @@ rl = {};
 torch.include('rl','Learner.lua');
 torch.include('rl','PolicySearch.lua');
 torch.include('rl','Reinforce.lua');
+torch.include('rl','Policy.lua');
 torch.include('rl','DiscretePolicy.lua');
+torch.include('rl','Optimizer.lua');
+torch.include('rl','StochasticGradientDescent.lua');
 
 
 
