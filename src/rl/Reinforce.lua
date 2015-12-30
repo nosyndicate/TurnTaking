@@ -12,13 +12,20 @@ function Reinforce:__init(model, actor, optimizer)
 end
 
 function Reinforce:step(s, r)
+	self.optimizer.grads:zero();
+
 	-- first accumulate the reward
 	-- TODO: this means we are not discount the reward, may consider as future work
 	self.rewardCurrentTrial = self.rewardCurrentTrial + r;
 	
 	-- then compute the gradient of current step and add to gradient of current trial
 	local dLogPolicyDOutput = self.actor:backward();
+	--print("log policy is ");
+	--print(dLogPolicyDOutput);
 	self.model:backward(s, dLogPolicyDOutput);
+	--print("grads is ");
+	--print(self.optimizer.grads);
+	
 	self.gradientCurrentTrial:add(self.optimizer.grads);
 end
 
@@ -43,7 +50,7 @@ function Reinforce:calculateGradient()
 	local gradientEstimator = self.gradient[1]:clone():zero();
 	for i = 1,l do
 		-- multiple the accumulated gradient for each trial with the reward
-		local tempGradient = torch.mul(self.gradient[i], reward[i]);
+		local tempGradient = torch.mul(self.gradient[i], self.reward[i]);
 		-- sum up the trials
 		gradientEstimator:add(tempGradient);
 	end

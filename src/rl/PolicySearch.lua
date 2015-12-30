@@ -18,8 +18,8 @@ function PolicySearch:getAction(s)
 	return action;
 end
 
-function PolicySearch:learning(s, r)
-	local gradient = calculateGradient();
+function PolicySearch:learn(s, r)
+	local gradient = self:calculateGradient();
 	
 	-- update the parameters with the gradient
 	self.optimizer:gradientAscent(gradient);
