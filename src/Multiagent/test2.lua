@@ -18,37 +18,21 @@ function main()
 	local optimizer1 = rl.StochasticGradientDescent(model1:getParameters());
 	local optimizer2 = rl.StochasticGradientDescent(model2:getParameters());
 
-	local agent1 = rl.Reinforce(model1, policy1, optimizer1);
-	local agent2 = rl.Reinforce(model2, policy2, optimizer2);
-
+	
+	local agent1 = rl.GPOMDP(model1, policy1, optimizer1);
+	local agent2 = rl.GPOMDP(model2, policy2, optimizer2);
 
 	local state = torch.Tensor({1});
 	
 	print(model1:forward(state));
 	print(model2:forward(state));
 	
-	for i = 1,2000 do
-		local average1, average2 = 0,0;
-		-- repeat 10 trials
-		for j = 1,50 do
-			agent1:startTrial();
-			agent2:startTrial();
-			local r1, r2 = ro:playGame(agent1:getAction(state),agent2:getAction(state));
-			agent1:step(state, r1);
-			agent2:step(state, r2);
-			agent1:endTrial();
-			agent2:endTrial();
-			average1 = average1 + r1;
-			average2 = average2 + r2;
-		end
-		agent1:learn(nil, nil);
-		agent2:learn(nil, nil);
-		average1 = average1/50;
-		average2 = average2/50;
+	for i = 1,2000*50 do
+		local r1, r2 = ro:playGame(agent1:getAction(state),agent2:getAction(state));
+		agent1:learn(state, r1);
+		agent2:learn(state, r2);
 		if i%50==0 then
-			print("average is "..average1..","..average2);
-			print(model1:forward(state));
-			print(model2:forward(state));
+			print("reward is "..r1..","..r2);
 		end
 	end
 	
