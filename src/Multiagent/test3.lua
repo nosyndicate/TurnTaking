@@ -1,7 +1,7 @@
 require 'torch'
 require 'nn'
 require 'rl'
-local ro = require 'Multiagent.ro'
+local climb = require 'Multiagent.climbps'
 
 
 
@@ -20,8 +20,8 @@ function main()
 
 	local agent1 = rl.LenienceReinforce(model1, policy1, optimizer1);
 	local agent2 = rl.LenienceReinforce(model2, policy2, optimizer2);
-	agent1:setLearningRate(0.01);
-	agent2:setLearningRate(0.01);
+	agent1:setLearningRate(0.0003);
+	agent2:setLearningRate(0.0003);
 
 	local state = torch.Tensor({1});
 	
@@ -34,7 +34,7 @@ function main()
 		for j = 1,100 do
 			agent1:startTrial();
 			agent2:startTrial();
-			local r1, r2 = ro:playGame(agent1:getAction(state),agent2:getAction(state));
+			local r1, r2 = climb:playGame(agent1:getAction(state),agent2:getAction(state));
 			agent1:step(state, r1);
 			agent2:step(state, r2);
 			agent1:endTrial();
@@ -47,7 +47,7 @@ function main()
 		average1 = average1/100;
 		average2 = average2/100;
 		if i%50==0 then
-			print("average is "..average1..","..average2);
+			print("the norm of gradient is "..optimizer1.grads:norm().." and "..optimizer2.grads:norm());
 			print(model1:forward(state));
 			print(model2:forward(state));
 		end

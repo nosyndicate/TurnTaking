@@ -15,6 +15,8 @@ function Policy:__init(actNum)
 	self.gradInput = torch.Tensor();
 end
 
+
+
 -- simply calls the forward function
 function Policy:getAction(parameters)
 	return self:forward(parameters);

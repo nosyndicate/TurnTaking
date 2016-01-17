@@ -1,7 +1,7 @@
 local battle = {};
 
-battle.matrixOne = {{1,0},{0,2}};
-battle.matrixTwo = {{2,0},{0,1}};
+battle.matrixOne = {{1,0},{0,10}};
+battle.matrixTwo = {{10,0},{0,1}};
 battle.numAction = 2; -- how many available action 
 battle.numState = 1; -- how many state variable
 

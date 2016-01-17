@@ -74,6 +74,10 @@ function LenienceReinforce:calculateGradient(s, r)
 	
 	-- TODO: may need to consider to add optimal baseline here
 	
+	-- reset trials
+	self.reward = {};
+	self.gradient = {};
+	
 	-- return the average of the gradient estimator
 	return torch.div(gradientEstimator, l); 
 end
